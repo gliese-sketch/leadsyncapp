@@ -1,3 +1,6 @@
+# Project specific
+companies.csv
+
 /node_modules# Logs
 logs
 *.log
