@@ -1,5 +1,7 @@
 # Project specific
 companies.csv
+errors.csv
+final.csv
 
 /node_modules# Logs
 logs
