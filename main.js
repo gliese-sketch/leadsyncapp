@@ -1,32 +1,39 @@
 #!/usr/bin/env node
-import { intro, outro, log } from "@clack/prompts";
+import { intro, outro, log, spinner } from "@clack/prompts";
 import core from "./lib/core.js";
 import prompt from "./lib/prompt.js";
 import { readCSV, writeCSV } from "./lib/io.js";
 
-
-
 async function main() {
   intro(`Lead Sync App start your csv validation`);
 
-  const { input, output, errors } = await prompt();
+  const { input, output, errors: errorsFile } = await prompt();
+
+  const s = spinner();
 
   log.success(input);
   log.success(output);
-  log.success(errors);
+  log.success(errorsFile);
 
+  s.start("Reading the file");
+
+  const csvData = readCSV(input);
+  const [clean, errors] = core(csvData.body);
+
+  log.success("Validation rules complete ✅");
+
+  s.start("Creating new files");
+
+  // Generate clean csv
+  writeCSV(output, clean);
+  log.success("Write to clean done ✅");
+
+  // Generate report
+  writeCSV(errorsFile, errors);
+  log.success("Generated report successfully! ✅");
+
+  s.stop();
   outro("You're done!");
-  // const csvData = readCSV(argv.input);
-  // const [clean, errors] = core(csvData.body);
-  // console.log("Validation rules complete ✅");
-
-  // // Generate clean csv
-  // writeCSV(argv.output, clean);
-  // console.log("Write to clean done ✅");
-
-  // // Generate report
-  // writeCSV(argv.report, errors);
-  // console.log("Generated report successfully! ✅");
 }
 
 await main();
